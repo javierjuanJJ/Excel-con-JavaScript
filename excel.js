@@ -26,13 +26,27 @@ let State = Times(COLUMNS).map((column, x) =>
 
 const renderSpreadsheet = () => {
     // Este bloque iría dentro de la función renderSpreadsheet
-    Head.innerHTML = ` [15]
+    Head.innerHTML = `
 <tr>
-    <th></th> [14]
-    ${Times(COLUMNS).map(i => `<th>${getColumn(i)}</th>`).join('')} [7, 14]
+    <th></th>
+    ${Times(COLUMNS).map(i => `<th>${getColumn(i)}</th>`).join('')}
 </tr>
 `;
+
+
+    // Este bloque iría dentro de la función renderSpreadsheet, después del Head.innerHTML
+    Body.innerHTML = Times(ROWS).map(Row => `
+    <tr>
+        <td>${Row + 1}</td>
+        ${Times(COLUMNS).map(Column => `
+            <td data-row="${Row}" data-column="${Column}"> 
+                <span>${State[Column][Row].computedValue}</span>
+                <input type="text" value="${State[Column][Row].value}" />
+            </td>
+        `).join('')}
+    </tr>
+`).join('');
 };
 
-// Ejecución inicial de la función de renderizado [13]
+// Ejecución inicial de la función de renderizado
 renderSpreadsheet(); 
