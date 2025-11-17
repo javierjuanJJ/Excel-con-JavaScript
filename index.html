@@ -1,12 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>excel.js</title>
+
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            position: relative;
+        }
+
+        td span,
+        td input {
+            position: absolute;
+            /* Centrado usando inset */
+            inset: 0;
+            /* Otros estilos de centrado/alineación */
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        td input {
+            opacity: 0;
+            /* Oculto inicialmente */
+        }
+
+        /* Estilo para mostrar input cuando tiene foco */
+        td input:focus {
+            opacity: 1;
+        }
+    </style>
+
     <!-- Se enlaza el script como módulo para permitir import/export -->
     <script type="module" src="excel.js"></script> [3]
 </head>
+
 <body>
     <!-- Estructura de tabla utilizada para la hoja de cálculo -->
     <table>
@@ -16,4 +50,5 @@
         <tbody></tbody>
     </table>
 </body>
+
 </html>
