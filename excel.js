@@ -50,3 +50,5 @@ const renderSpreadsheet = () => {
 
 // Ejecución inicial de la función de renderizado
 renderSpreadsheet(); 
+
+
