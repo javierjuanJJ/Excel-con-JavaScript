@@ -17,9 +17,9 @@ const Times = length => Array.from({ length }, (_, i) => i);
 
 const getColumn = (i) => String.fromCharCode(65 + i); // 65 es el código ASCII de 'A' [7, 9]
 
-let State = Times(COLUMNS).map((column, x) => 
+let State = Times(COLUMNS).map((column, x) =>
     Times(ROWS).map((row, i) => ({
-        computedValue: 0, 
+        computedValue: 0,
         value: '',
     }))
 );
@@ -49,7 +49,42 @@ const renderSpreadsheet = () => {
 `).join('');
 };
 
+
+Body.addEventListener('click', (event) => {
+    const TD = event.target.closest('td');
+
+    if (!TD) return;
+
+    const Input = TD.querySelector('input');
+    const x = parseInt(TD.dataset.column);
+    const i = parseInt(TD.dataset.row);
+
+    Input.focus();
+
+    // Truco: Mueve el cursor al final del texto al entrar [31]
+    const position = Input.value.length;
+    Input.setSelectionRange(position, position);
+
+    // Escucha el evento blur (al salir del input) una sola vez [27, 33]
+    Input.addEventListener('blur', () => {
+        const inputValue = Input.value;
+        const stateValue = State[x][i].value;
+
+        // Evitar repintado si el valor no ha cambiado
+        if (inputValue === stateValue) return;
+
+        updateCell(x, i, inputValue);
+    }, { once: true });
+
+    // Manejo del Enter
+    Input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            Input.blur();
+        }
+    });
+});
+
 // Ejecución inicial de la función de renderizado
-renderSpreadsheet(); 
+renderSpreadsheet();
 
 
