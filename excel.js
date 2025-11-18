@@ -17,12 +17,13 @@ const Times = length => Array.from({ length }, (_, i) => i);
 
 const getColumn = (i) => String.fromCharCode(65 + i); // 65 es el código ASCII de 'A' [7, 9]
 
-let State = Times(COLUMNS).map((column, x) =>
+let State = Times(COLUMNS).map((column, x) => 
     Times(ROWS).map((row, i) => ({
-        computedValue: 0, // Inicialmente se establece en 0 [10]
-        value: '',        // Inicialmente vacío [11, 12]
+        computedValue: 0, 
+        value: '',
     }))
-);[11, 12]
+);
+// Esta definición fue incluida al inicio del script en el Paso 4.
 
 const renderSpreadsheet = () => {
     // Este bloque iría dentro de la función renderSpreadsheet
