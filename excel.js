@@ -84,6 +84,28 @@ Body.addEventListener('click', (event) => {
     });
 });
 
+
+const updateCell = (x, i, value) => {
+    // 1. Clonación profunda del estado para evitar mutaciones directas [35]
+    const NewState = structuredClone(State);
+    
+    // 2. Extracción y modificación de la celda
+    const Cell = NewState[x][i];
+    Cell.value = value;
+    
+    // El cálculo del computedValue se manejará en los capítulos 13 y 14.
+    // Por ahora, solo se guarda el valor (simulación temporal: Cell.computedValue = Number(value);) [35]
+    
+    NewState[x][i] = Cell;
+    
+    // 3. Recálculo (se integrará en el capítulo 14)
+    computeAllCells(NewState);  // Se mueve la lógica de recálculo aquí.
+
+    // 4. Machacar el estado antiguo y repintar
+    State = NewState;
+    renderSpreadsheet(); 
+};
+
 // Ejecución inicial de la función de renderizado
 renderSpreadsheet();
 
