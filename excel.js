@@ -86,24 +86,83 @@ Body.addEventListener('click', (event) => {
 
 
 const updateCell = (x, i, value) => {
-    // 1. Clonación profunda del estado para evitar mutaciones directas [35]
+    // 1. Clonación profunda
     const NewState = structuredClone(State);
-    
-    // 2. Extracción y modificación de la celda
     const Cell = NewState[x][i];
+
+    // 2. Asignar nuevo valor introducido
     Cell.value = value;
     
-    // El cálculo del computedValue se manejará en los capítulos 13 y 14.
-    // Por ahora, solo se guarda el valor (simulación temporal: Cell.computedValue = Number(value);) [35]
-    
-    NewState[x][i] = Cell;
-    
-    // 3. Recálculo (se integrará en el capítulo 14)
-    computeAllCells(NewState);  // Se mueve la lógica de recálculo aquí.
+    // 3. Recalcular todas las celdas (usando NewState para capturar todas las dependencias)
+    computeAllCells(NewState); 
 
     // 4. Machacar el estado antiguo y repintar
     State = NewState;
-    renderSpreadsheet(); 
+    renderSpreadsheet();
+};
+
+// La definición final de computeValue se actualizará en el Capítulo 14 para aceptar constantes.
+
+const computeValue = (value, constants) => {
+    if (typeof value !== 'string' || !value.startsWith('=')) {
+        return value; // Devuelve el valor si no es una cadena o no es una fórmula
+    }
+
+    // Extrae la fórmula (quitando el '=')
+    const formula = value.slice(1); 
+    let computedValue = value; 
+
+    try {
+        // Uso de IIFE para inyectar constantes antes de evaluar [40, 42]
+        computedValue = ((constants, formula) => {
+            return eval(constants + formula);
+        })(constants, formula);
+
+    } catch (e) {
+        // Manejo de errores de cálculo
+        computedValue = 'ERROR';
+    }
+    
+    // Aseguramos que si es un número, se use el valor numérico
+    if (!isNaN(parseFloat(computedValue)) && isFinite(computedValue)) {
+        computedValue = Number(computedValue);
+    }
+
+    return computedValue;
+};
+
+
+const generateCellsConstants = (cells) => {
+    let constantsString = '';
+
+    Times(COLUMNS).forEach((x) => {
+        Times(ROWS).forEach((i) => {
+            const cellId = `${getColumn(x)}${i + 1}`; // A1, B2, etc.
+            const computedValue = cells[x][i].computedValue;
+            
+            // Crea una cadena 'const A1 = 5;'
+            constantsString += `const ${cellId} = ${computedValue};`;
+        });
+    });
+
+    return constantsString;
+};
+
+const computeAllCells = (state) => {
+    // 1. Generar constantes basadas en el estado actual (antes de recalcular)
+    const constants = generateCellsConstants(state);
+
+    // 2. Iterar y recalcular todas las celdas usando las constantes
+    Times(COLUMNS).forEach((x) => {
+        Times(ROWS).forEach((i) => {
+            const Cell = state[x][i];
+            
+            // Calcula el nuevo valor computado usando la fórmula y las constantes
+            Cell.computedValue = computeValue(Cell.value, constants);
+        });
+    });
+
+    // La función muta directamente el 'state' que se le pasa (NewState en updateCell)
 };
 
 // Ejecución inicial de la función de renderizado
